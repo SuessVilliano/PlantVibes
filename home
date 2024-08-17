@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Vibes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0e5d8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        header {
+            background-color: #6b705c;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        #uploadArea {
+            width: 100%;
+            max-width: 600px;
+            padding: 40px;
+            border: 2px dashed #6b705c;
+            background-color: #ffe8d6;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #uploadArea:hover {
+            background-color: #f4acb7;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #uploadArea input {
+            display: none;
+        }
+
+        #uploadArea p {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        #urlInput {
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #urlInput input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            flex-grow: 1;
+            margin-right: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #urlInput button {
+            padding: 10px 20px;
+            background-color: #a5a58d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #plantInfo {
+            background-color: #f7f3e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #plantInfo img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        #history {
+            background-color: #ffe8d6;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #history li {
+            background-color: #f4f4f4;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        #chatBot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        #chatBotHeader {
+            background-color: #6b705c;
+            color: #fff;
+            padding: 10px;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        #chatBotMessages {
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #chatBotInput {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        #chatBotInput input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            margin-right: 10px;
+        }
+
+        #chatBotInput button {
+            padding: 10px;
+            background-color: #a5a58d;
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        #scrollToTop {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            background-color: #6b705c;
+            color: #fff;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Plant Vibes</h1>
+    </header>
+
+    <main>
+        <div id="urlInput">
+            <input type="text" id="plantUrl" placeholder="Enter an image URL or plant name">
+            <button onclick="searchPlant()">Search</button>
+        </div>
+
+        <div id="uploadArea" onclick="document.getElementById('plantImage').click();">
+            <p>Drag & Drop or Click to Upload an Image</p>
+            <input type="file" id="plantImage" accept="image/*" onchange="identifyPlant()">
+        </div>
+
+        <div id="plantInfo" class="hidden">
+            <img id="plantImagePreview" src="" alt="Plant Image">
+            <div id="plantInfoContent"></div>
+        </div>
+
+        <div id="history" class="hidden">
+            <h2>Previous Uploads</h2>
+            <ul id="uploadsList"></ul>
+        </div>
+    </main>
+
+    <div id="chatBot">
+        <div id="chatBotHeader">Plant Vibes Chat Bot</div>
+        <div id="chatBotMessages"></div>
+        <div id="chatBotInput">
+            <input type="text" id="chatInput" placeholder="Ask about your plant...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="scrollToTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        let previousUploads = [];
+
+        function searchPlant() {
+            const plantUrl = document.getElementById('plantUrl').value;
+            if (plantUrl) {
+                alert(`Searching for: ${plantUrl}`);
+                // Implement actual search logic here
+            } else {
+                alert("Please enter a URL or plant name.");
+            }
+        }
+
+        function identifyPlant() {
+            const fileInput = document.getElementById('plantImage');
+            const file = fileInput.files[0];
+            if (file) {
+                // Display the uploaded image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('plantImagePreview').src = e.target.result;
+                    document.getElementById('plantInfo').classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+
+                // Simulate plant identification (replace with actual API call in a real app)
+                const plantInfo = {
+                    name: "Sample Plant",
+                    scientificName: "Plantus Exampleus",
+                    description: "This is a sample plant description."
+                };
+                displayPlantInfo(plantInfo);
+                addToPreviousUploads(file.name);
+            } else {
+                alert("Please select an image file.");
+            }
+        }
+
+        function displayPlantInfo(info) {
+            const plantInfoContent = document.getElementById('plantInfoContent');
+            plantInfoContent.innerHTML = `
+                <p><strong>Name:</strong> ${info.name}</p>
+                <p><strong>Scientific Name:</strong> ${info.scientificName}</p>
+                <p><strong>Description:</strong> ${info.description}</p>
+            `;
+        }
+
+        function addToPreviousUploads(fileName) {
+            previousUploads.unshift(fileName);
+            if (previousUploads.length > 10) {
+                previousUploads.pop();
+            }
+            updatePreviousUploadsList();
+        }
+
+        function updatePreviousUploadsList() {
+            const uploadsList = document.getElementById('uploadsList');
+            uploadsList.innerHTML = previousUploads.map(upload => `<li>${upload}</li>`).join('');
+            document.getElementById('history').classList.remove('hidden');
+        }
+
+        // Chat Bot Functionality
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (message) {
+                const chatMessages = document.getElementById('chatBotMessages');
+                chatMessages.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+                chatInput.value = '';
+
+                // Simulate bot response (replace with actual AI integration)
+                setTimeout(() => {
+                    chatMessages.innerHTML += `<div><strong>Bot:</strong> I'm a plant expert! How can I assist you with your ${message}?</div>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+
+        // Scroll to Top Functionality
+        window.onscroll = function() {
+            const scrollToTopBtn = document.getElementById('scrollToTop');
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                scrollToTopBtn.style.display = "block";
+            } else {
+                scrollToTopBtn.style.display = "none";
+            }
+        };
+
+        function scrollToTop() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</body>
+</html>
